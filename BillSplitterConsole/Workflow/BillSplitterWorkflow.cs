@@ -21,84 +21,68 @@ namespace BillSplitterConsole.Workflow
             trips_ = new List<Trip>();
         }
 
-        public void SplitBill(string tripInputFilePath)
+        public void SplitBill(string _tripInputFilePath)
         {
             ExpenseReader expenseReader = new ExpenseReader();
-            Queue<object> expenseQueue = expenseReader.ReadExpenses(tripInputFilePath);
-
+            Queue<object> expenseQueue = expenseReader.ReadExpenses(_tripInputFilePath);
+            AllocateExpenses(expenseQueue);
+            AllocatePayments(trips_);
         }
 
-        private void BuildObjectGraph(Queue<object> expenseQueue)
+        private void AllocateExpenses(Queue<object> _expenseQueue)
         {
-            int participantCount = (int)expenseQueue.Dequeue();
+            int participantCount = (int)_expenseQueue.Dequeue();
 
-            Trip trip = new Trip();
-
-            for (int elementCount = 0; elementCount < participantCount; elementCount++)
+            while (participantCount > 0)
             {
-                int expenseCount = (int)expenseQueue.Dequeue();
+                Trip trip = AddTrip();
 
+                for (int elementCount = 0; elementCount < participantCount; elementCount++)
+                {
+                    int participantID = AddParticipant(trip);
+                    AllocateParticipantExpenses(_expenseQueue, trip, participantID);
+                }
+                participantCount = (int)_expenseQueue.Dequeue();
             }
-
+ 
          }
 
-        //public Queue<object> GetParsedTokens(List<string> _tokens)
-        //{
-        //    try
-        //    {
-        //        int tokenIndex = 0;
-        //        int participantsCount = int.Parse(_tokens[tokenIndex]);
-
-        //        //Console.WriteLine(participantsCount); //TODO
-
-        //        while (participantsCount != 0)
-        //        {
-        //            //inputNumerics_.Add(participantsCount);
-        //            inputNumerics_.Enqueue(participantsCount);
-
-        //            for (int i = 0; i < participantsCount; i++)
-        //            {
-        //                ParseParticipant(_tokens, ref tokenIndex);
-        //            }
-
-        //            participantsCount = int.Parse(_tokens[tokenIndex]);
-        //        }
-
-        //        return inputNumerics_;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        throw;
-        //    }
-        //    finally 
-        //    { 
-        //    }
-        //}
-
-        //private void ParseParticipant(List<string> _tokens, ref int _index)
-        //{
-        //    int expensesCount = int.Parse(_tokens[_index++]);
-
-        //    //Console.WriteLine(expensesCount); //TODO
-
-        //    //inputNumerics_.Add(expensesCount);
-        //    inputNumerics_.Enqueue(expensesCount);
-
-        //    for (int i = 0; i < expensesCount; i++)
-        //    {
-        //        ParseExpense(_tokens, ref _index);
-        //    }
-        //}
-
-        //private void ParseExpense(List<string> _tokens, ref int _index)
-        //{
-        //    double amount = double.Parse(_tokens[_index++]);
-        //    inputNumerics_.Enqueue(amount);
-        //}
-
-        private void AddTrip()
+        private void AllocateParticipantExpenses(Queue<object> _expenseQueue, Trip _trip, int _participantID)
         {
+            int expenseCount = (int)_expenseQueue.Dequeue();
+            for (int elementCount = 0; elementCount < expenseCount; elementCount++)
+            {
+                double amount = (double)_expenseQueue.Dequeue();
+                AddExpense(_trip, _participantID, amount);
+            }
+        }
 
+        private Trip AddTrip()
+        {
+            Trip trip = new Trip();
+            trips_.Add(trip);
+            return trip;
+        }
+
+        private int AddParticipant(Trip _trip)
+        {
+            int participantID = _trip.AddParticipant();
+            return participantID;
+        }
+
+        private void AddExpense(Trip _trip, int _participantID, double _amount)
+        {
+            _trip.AddExpense(_participantID, _amount);
+        }
+
+        private void AllocatePayments(List<Trip> _trips)
+        {
+            foreach (Trip trip in _trips)
+            {
+                trip.SettleBalance();
+                trip.GetBalances();
+
+            }
         }
     }
 }

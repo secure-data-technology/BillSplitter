@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using BillSplitterConsole.Workflow;
-using BillSplitterConsole.Infrastructure;
+﻿using BillSplitterConsole.Workflow;
 
 namespace BillSplitterConsole
 {
@@ -15,10 +7,9 @@ namespace BillSplitterConsole
         static void Main(string[] args)
         {
             string filePath = args[0];
-  
-
-            BillSplitterWorkflow controller = new BillSplitterWorkflow();
-          //  Queue<object> parsedTokens = controller.GetParsedTokens(lines);
+ 
+            BillSplitterWorkflow workflow = new BillSplitterWorkflow();
+            workflow.SplitBill(filePath);
         }
     }
 }
