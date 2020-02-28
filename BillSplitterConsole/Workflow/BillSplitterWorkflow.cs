@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BillSplitterConsole.Infrastructure;
+﻿using BillSplitterConsole.Infrastructure;
 using BillSplitterConsole.Model;
-using BillSplitterConsole.Workflow;
+using System.Collections.Generic;
 
 namespace BillSplitterConsole.Workflow
 {
@@ -21,12 +13,16 @@ namespace BillSplitterConsole.Workflow
             trips_ = new List<Trip>();
         }
 
-        public void SplitBill(string _tripInputFilePath)
+        public void SplitBill(string _tripInputFilePath, string _paymentOutputFilePath)
         {
             ExpenseReader expenseReader = new ExpenseReader();
             Queue<object> expenseQueue = expenseReader.ReadExpenses(_tripInputFilePath);
+            
             AllocateExpenses(expenseQueue);
             AllocatePayments(trips_);
+
+            PaymentWriter paymentWriter = new PaymentWriter();
+            paymentWriter.WritePayments(_paymentOutputFilePath, trips_);
         }
 
         private void AllocateExpenses(Queue<object> _expenseQueue)
@@ -52,7 +48,7 @@ namespace BillSplitterConsole.Workflow
             int expenseCount = (int)_expenseQueue.Dequeue();
             for (int elementCount = 0; elementCount < expenseCount; elementCount++)
             {
-                double amount = (double)_expenseQueue.Dequeue();
+                decimal amount = (decimal)_expenseQueue.Dequeue();
                 AddExpense(_trip, _participantID, amount);
             }
         }
@@ -70,19 +66,20 @@ namespace BillSplitterConsole.Workflow
             return participantID;
         }
 
-        private void AddExpense(Trip _trip, int _participantID, double _amount)
+        private void AddExpense(Trip _trip, int _participantID, decimal _amount)
         {
             _trip.AddExpense(_participantID, _amount);
         }
 
-        private void AllocatePayments(List<Trip> _trips)
+        private List<Trip> AllocatePayments(List<Trip> _trips)
         {
             foreach (Trip trip in _trips)
             {
                 trip.SettleBalance();
-                trip.GetBalances();
-
+                //trip.GetBalances();
             }
+
+            return _trips;
         }
     }
 }

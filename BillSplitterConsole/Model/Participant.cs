@@ -1,43 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BillSplitterConsole.Model
 {
     internal class Participant
     {
         private List<Expense> expenses;
-        private double balance;
+        private decimal balance;
         private static int id = 0;
 
         public Participant()
         {
             expenses = new List<Expense>();
-            balance = double.NaN;
+            balance = decimal.Zero; 
             ID = ++id;
         }
 
         public int ID { get; }
 
-        public void AddExpense(double amount)
+        public void AddExpense(decimal amount)
         {
             expenses.Add(new Expense(amount));
         }
 
-        public double GetTotalExpenses()
+        public decimal GetTotalExpenses()
         {
-            double totalExpenses = (from e in expenses select e.Amount).Sum();
+            decimal totalExpenses = (from e in expenses select e.Amount).Sum();
             return totalExpenses;
         }
 
-        public void SetTripBalance(double tripBalance)
+        public void SetTripBalance(decimal tripBalance)
         {
             balance = tripBalance;
         }
 
-        public double GetTripBalance()
+        public decimal GetTripBalance()
         {
             return balance;
         }

@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BillSplitterConsole.Model
+﻿namespace BillSplitterConsole.Model
 {
     internal class Expense
     {
-        public Expense(double amount)
+        public Expense(decimal amount)
         {
             Amount = amount;
         }
 
-        public double Amount { get; }
+        public decimal Amount { get; }
     }
 }

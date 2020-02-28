@@ -27,9 +27,7 @@ namespace BillSplitterConsole.Infrastructure
             {
                 int tokenIndex = 0;
                 int participantsCount = int.Parse(_tokens[tokenIndex++]);
-                Console.WriteLine("Trip");
-                Console.WriteLine("Participant Count: {0}", participantsCount); //TODO
-
+ 
                 while (participantsCount > 0 && tokenIndex < _tokens.Count)
                 {
 
@@ -37,13 +35,10 @@ namespace BillSplitterConsole.Infrastructure
 
                     for (int i = 0; i < participantsCount; i++)
                     {
-                        Console.WriteLine("Participant");
                         ParseParticipant(_tokens, ref tokenIndex);
                     }
 
                     participantsCount = int.Parse(_tokens[tokenIndex++]);
-                    Console.WriteLine("Trip");
-                    Console.WriteLine("Participant Count: {0}", participantsCount); //TODO
                 }
                 inputNumerics_.Enqueue(participantsCount);
             }
@@ -55,13 +50,11 @@ namespace BillSplitterConsole.Infrastructure
             {
             }
         }
-
         private void ParseParticipant(List<string> _tokens, ref int _index)
         {
             try
             {
                 int expensesCount = int.Parse(_tokens[_index++]);
-                Console.WriteLine("Expense Count {0}", expensesCount); //TODO
 
                 inputNumerics_.Enqueue(expensesCount);
 
@@ -69,11 +62,10 @@ namespace BillSplitterConsole.Infrastructure
                 {
                     ParseExpense(_tokens, ref _index);
                 }
-
             }
             catch (Exception)
             {
-
+                throw;
             }
         }
 
@@ -81,13 +73,12 @@ namespace BillSplitterConsole.Infrastructure
         {
             try
             {
-                double amount = double.Parse(_tokens[_index++]);
-                Console.WriteLine("Expense: {0}", amount); //TODO
+                decimal amount = decimal.Parse(_tokens[_index++]);
                 inputNumerics_.Enqueue(amount);
             }
             catch (Exception)
             {
-
+                throw;
             }
         }
     }

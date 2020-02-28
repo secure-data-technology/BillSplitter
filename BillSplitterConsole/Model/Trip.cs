@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BillSplitterConsole.Model
 {
-    internal class Trip
+    public class Trip
     {
         private Dictionary<int, Participant> participants_;
 
@@ -22,7 +19,7 @@ namespace BillSplitterConsole.Model
             return participant.ID;
         }
 
-        public void AddExpense(int _participantID, double _amount)
+        public void AddExpense(int _participantID, decimal _amount)
         {
             participants_[_participantID].AddExpense(_amount);
         }
@@ -30,8 +27,8 @@ namespace BillSplitterConsole.Model
         public void SettleBalance()
         {
             // TODO
-            double totalExpenses = (from p in participants_.Values select p.GetTotalExpenses()).Sum();
-            double averageExpense = totalExpenses / participants_.Values.Count;
+            decimal totalExpenses = (from p in participants_.Values select p.GetTotalExpenses()).Sum();
+            decimal averageExpense = totalExpenses / participants_.Values.Count;
 
             foreach (Participant participant in participants_.Values)
             {

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using BillSplitterConsole.Model;
 
 namespace BillSplitterConsole.Infrastructure
 {
     public interface IPaymentWriter
     {
+        void WritePayments(string _outputPath, List<Trip> _trips);
     }
 }
