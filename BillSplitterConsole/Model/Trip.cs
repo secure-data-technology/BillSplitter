@@ -19,6 +19,12 @@ namespace BillSplitterConsole.Model
             return participant.ID;
         }
 
+        public int AddParticipant(Participant _participant)
+        {
+            participants_.Add(_participant.ID, _participant);
+            return _participant.ID;
+        }
+
         public void AddExpense(int _participantID, decimal _amount)
         {
             participants_[_participantID].AddExpense(_amount);

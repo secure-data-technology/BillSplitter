@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using BillSplitterConsole.Model;
+﻿using BillSplitterConsole.Model;
+using System.Collections.Generic;
 
 namespace BillSplitterConsole.Infrastructure
 {

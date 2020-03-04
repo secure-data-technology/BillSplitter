@@ -38,7 +38,7 @@ namespace BillSplitterConsole.Infrastructure
             }
 
             List<ParticipantBalance> participantBalances = (List<ParticipantBalance>)trip.GetBalances();
-            foreach(ParticipantBalance participantBalance in participantBalances)
+            foreach (ParticipantBalance participantBalance in participantBalances)
             {
                 TokenizeParticipantBalance(participantBalance);
             }
@@ -50,7 +50,7 @@ namespace BillSplitterConsole.Infrastructure
             nfi.NumberNegativePattern = 0;
             nfi.CurrencySymbol = "$";
 
-            string token = participantBalance.Balance.ToString("C2", nfi); 
+            string token = participantBalance.Balance.ToString("C2", nfi);
             tokenList_.Add(token);
         }
     }

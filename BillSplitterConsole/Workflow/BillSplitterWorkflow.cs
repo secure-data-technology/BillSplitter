@@ -1,10 +1,11 @@
 ﻿using BillSplitterConsole.Infrastructure;
 using BillSplitterConsole.Model;
+using System;
 using System.Collections.Generic;
 
 namespace BillSplitterConsole.Workflow
 {
-    internal class BillSplitterWorkflow
+    public class BillSplitterWorkflow
     {
         private List<Trip> trips_;
 
@@ -17,7 +18,7 @@ namespace BillSplitterConsole.Workflow
         {
             ExpenseReader expenseReader = new ExpenseReader();
             Queue<object> expenseQueue = expenseReader.ReadExpenses(_tripInputFilePath);
-            
+
             AllocateExpenses(expenseQueue);
             AllocatePayments(trips_);
 
@@ -25,8 +26,13 @@ namespace BillSplitterConsole.Workflow
             paymentWriter.WritePayments(_paymentOutputFilePath, trips_);
         }
 
-        private void AllocateExpenses(Queue<object> _expenseQueue)
+        public List<Trip> AllocateExpenses(Queue<object> _expenseQueue)
         {
+            if (_expenseQueue == null || _expenseQueue.Count == 0)
+            {
+                throw new ArgumentException("expense queue must be instantiated with at least one queue element");
+            }
+
             int participantCount = (int)_expenseQueue.Dequeue();
 
             while (participantCount > 0)
@@ -40,8 +46,9 @@ namespace BillSplitterConsole.Workflow
                 }
                 participantCount = (int)_expenseQueue.Dequeue();
             }
- 
-         }
+
+            return trips_;
+        }
 
         private void AllocateParticipantExpenses(Queue<object> _expenseQueue, Trip _trip, int _participantID)
         {
@@ -71,12 +78,16 @@ namespace BillSplitterConsole.Workflow
             _trip.AddExpense(_participantID, _amount);
         }
 
-        private List<Trip> AllocatePayments(List<Trip> _trips)
+        public List<Trip> AllocatePayments(List<Trip> _trips)
         {
+            if (_trips == null)
+            {
+                throw new ArgumentException("Trip list must be instantiated");
+            }
+
             foreach (Trip trip in _trips)
             {
                 trip.SettleBalance();
-                //trip.GetBalances();
             }
 
             return _trips;

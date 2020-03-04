@@ -1,5 +1,5 @@
-﻿using BillSplitterConsole.Workflow;
-using BillSplitterConsole.Infrastructure;
+﻿using BillSplitterConsole.Infrastructure;
+using BillSplitterConsole.Workflow;
 using System;
 
 namespace BillSplitterConsole

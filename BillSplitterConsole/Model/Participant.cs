@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace BillSplitterConsole.Model
 {
-    internal class Participant
+    public class Participant
     {
         private List<Expense> expenses;
         private decimal balance;
@@ -12,7 +12,7 @@ namespace BillSplitterConsole.Model
         public Participant()
         {
             expenses = new List<Expense>();
-            balance = decimal.Zero; 
+            balance = decimal.Zero;
             ID = ++id;
         }
 

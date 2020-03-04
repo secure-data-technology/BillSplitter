@@ -1,6 +1,6 @@
 ﻿namespace BillSplitterConsole.Model
 {
-    internal class Expense
+    public class Expense
     {
         public Expense(decimal amount)
         {

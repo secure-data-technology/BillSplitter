@@ -14,7 +14,7 @@ namespace BillSplitterConsole.Infrastructure
             if (FileExists(_filePath))
             {
                 File.Delete(_filePath);
-            }         
+            }
         }
     }
 }

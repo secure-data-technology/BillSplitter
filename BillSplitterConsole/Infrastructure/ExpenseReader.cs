@@ -27,7 +27,7 @@ namespace BillSplitterConsole.Infrastructure
             {
                 int tokenIndex = 0;
                 int participantsCount = int.Parse(_tokens[tokenIndex++]);
- 
+
                 while (participantsCount > 0 && tokenIndex < _tokens.Count)
                 {
 
@@ -42,7 +42,7 @@ namespace BillSplitterConsole.Infrastructure
                 }
                 inputNumerics_.Enqueue(participantsCount);
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 throw;
             }
