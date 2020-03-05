@@ -1,28 +1,24 @@
-﻿using BillSplitterConsole.Infrastructure;
+﻿using System;
+using BillSplitterConsole.Infrastructure;
 using BillSplitterConsole.Workflow;
-using System;
 
 namespace BillSplitterConsole
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             const string outputFileExtension = ".out";
-            string inputFilePath = args[0];
-            string outputFilePath = inputFilePath + outputFileExtension;
+            var inputFilePath = args[0];
+            var outputFilePath = inputFilePath + outputFileExtension;
 
-            FileSystemValidator fileSystemvalidator = new FileSystemValidator();
-            if (fileSystemvalidator.FileExists(inputFilePath))
-            {
-                fileSystemvalidator.EnsureFileDoesNotExist(outputFilePath);
-            }
+            var fileSystemValidator = new FileSystemValidator();
+            if (fileSystemValidator.FileExists(inputFilePath))
+                fileSystemValidator.EnsureFileDoesNotExist(outputFilePath);
             else
-            {
                 throw new ArgumentException("Specified expense file does not exist");
-            }
 
-            BillSplitterWorkflow workflow = new BillSplitterWorkflow();
+            var workflow = new BillSplitterWorkflow();
             workflow.SplitBill(inputFilePath, outputFilePath);
         }
     }

@@ -5,7 +5,7 @@ namespace BillSplitterConsole.Model
 {
     public class Trip
     {
-        private Dictionary<int, Participant> participants_;
+        private readonly Dictionary<int, Participant> participants_;
 
         public Trip()
         {
@@ -14,7 +14,7 @@ namespace BillSplitterConsole.Model
 
         public int AddParticipant()
         {
-            Participant participant = new Participant();
+            var participant = new Participant();
             participants_.Add(participant.ID, participant);
             return participant.ID;
         }
@@ -33,22 +33,20 @@ namespace BillSplitterConsole.Model
         public void SettleBalance()
         {
             // TODO
-            decimal totalExpenses = (from p in participants_.Values select p.GetTotalExpenses()).Sum();
-            decimal averageExpense = totalExpenses / participants_.Values.Count;
+            var totalExpenses = (from p in participants_.Values select p.GetTotalExpenses()).Sum();
+            var averageExpense = totalExpenses / participants_.Values.Count;
 
-            foreach (Participant participant in participants_.Values)
-            {
+            foreach (var participant in participants_.Values)
                 participant.SetTripBalance(averageExpense - participant.GetTotalExpenses());
-            }
         }
 
         public IEnumerable<ParticipantBalance> GetBalances()
         {
-            List<ParticipantBalance> balances = new List<ParticipantBalance>();
+            var balances = new List<ParticipantBalance>();
 
-            foreach (Participant participant in participants_.Values)
+            foreach (var participant in participants_.Values)
             {
-                ParticipantBalance balance = new ParticipantBalance(participant.ID, participant.GetTripBalance());
+                var balance = new ParticipantBalance(participant.ID, participant.GetTripBalance());
                 balances.Add(balance);
             }
 

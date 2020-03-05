@@ -11,10 +11,7 @@ namespace BillSplitterConsole.Infrastructure
 
         public void EnsureFileDoesNotExist(string _filePath)
         {
-            if (FileExists(_filePath))
-            {
-                File.Delete(_filePath);
-            }
+            if (FileExists(_filePath)) File.Delete(_filePath);
         }
     }
 }

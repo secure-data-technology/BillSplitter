@@ -5,38 +5,38 @@ namespace BillSplitterConsole.Model
 {
     public class Participant
     {
-        private List<Expense> expenses;
-        private decimal balance;
-        private static int id = 0;
+        private static int _id;
+        private readonly List<Expense> _expenses;
+        private decimal _balance;
 
         public Participant()
         {
-            expenses = new List<Expense>();
-            balance = decimal.Zero;
-            ID = ++id;
+            _expenses = new List<Expense>();
+            _balance = decimal.Zero;
+            ID = ++_id;
         }
 
         public int ID { get; }
 
         public void AddExpense(decimal amount)
         {
-            expenses.Add(new Expense(amount));
+            _expenses.Add(new Expense(amount));
         }
 
         public decimal GetTotalExpenses()
         {
-            decimal totalExpenses = (from e in expenses select e.Amount).Sum();
+            var totalExpenses = (from e in _expenses select e.Amount).Sum();
             return totalExpenses;
         }
 
         public void SetTripBalance(decimal tripBalance)
         {
-            balance = tripBalance;
+            _balance = tripBalance;
         }
 
         public decimal GetTripBalance()
         {
-            return balance;
+            return _balance;
         }
     }
 }

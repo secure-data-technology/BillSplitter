@@ -1,13 +1,13 @@
-﻿using BillSplitterConsole.Infrastructure;
-using BillSplitterConsole.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using BillSplitterConsole.Infrastructure;
+using BillSplitterConsole.Model;
 
 namespace BillSplitterConsole.Workflow
 {
     public class BillSplitterWorkflow
     {
-        private List<Trip> trips_;
+        private readonly List<Trip> trips_;
 
         public BillSplitterWorkflow()
         {
@@ -16,35 +16,34 @@ namespace BillSplitterConsole.Workflow
 
         public void SplitBill(string _tripInputFilePath, string _paymentOutputFilePath)
         {
-            ExpenseReader expenseReader = new ExpenseReader();
-            Queue<object> expenseQueue = expenseReader.ReadExpenses(_tripInputFilePath);
+            var expenseReader = new ExpenseReader();
+            var expenseQueue = expenseReader.ReadExpenses(_tripInputFilePath);
 
             AllocateExpenses(expenseQueue);
             AllocatePayments(trips_);
 
-            PaymentWriter paymentWriter = new PaymentWriter();
+            var paymentWriter = new PaymentWriter();
             paymentWriter.WritePayments(_paymentOutputFilePath, trips_);
         }
 
         public List<Trip> AllocateExpenses(Queue<object> _expenseQueue)
         {
             if (_expenseQueue == null || _expenseQueue.Count == 0)
-            {
                 throw new ArgumentException("expense queue must be instantiated with at least one queue element");
-            }
 
-            int participantCount = (int)_expenseQueue.Dequeue();
+            var participantCount = (int) _expenseQueue.Dequeue();
 
             while (participantCount > 0)
             {
-                Trip trip = AddTrip();
+                var trip = AddTrip();
 
-                for (int elementCount = 0; elementCount < participantCount; elementCount++)
+                for (var elementCount = 0; elementCount < participantCount; elementCount++)
                 {
-                    int participantID = AddParticipant(trip);
+                    var participantID = AddParticipant(trip);
                     AllocateParticipantExpenses(_expenseQueue, trip, participantID);
                 }
-                participantCount = (int)_expenseQueue.Dequeue();
+
+                participantCount = (int) _expenseQueue.Dequeue();
             }
 
             return trips_;
@@ -52,24 +51,24 @@ namespace BillSplitterConsole.Workflow
 
         private void AllocateParticipantExpenses(Queue<object> _expenseQueue, Trip _trip, int _participantID)
         {
-            int expenseCount = (int)_expenseQueue.Dequeue();
-            for (int elementCount = 0; elementCount < expenseCount; elementCount++)
+            var expenseCount = (int) _expenseQueue.Dequeue();
+            for (var elementCount = 0; elementCount < expenseCount; elementCount++)
             {
-                decimal amount = (decimal)_expenseQueue.Dequeue();
+                var amount = (decimal) _expenseQueue.Dequeue();
                 AddExpense(_trip, _participantID, amount);
             }
         }
 
         private Trip AddTrip()
         {
-            Trip trip = new Trip();
+            var trip = new Trip();
             trips_.Add(trip);
             return trip;
         }
 
         private int AddParticipant(Trip _trip)
         {
-            int participantID = _trip.AddParticipant();
+            var participantID = _trip.AddParticipant();
             return participantID;
         }
 
@@ -80,15 +79,9 @@ namespace BillSplitterConsole.Workflow
 
         public List<Trip> AllocatePayments(List<Trip> _trips)
         {
-            if (_trips == null)
-            {
-                throw new ArgumentException("Trip list must be instantiated");
-            }
+            if (_trips == null) throw new ArgumentException("Trip list must be instantiated");
 
-            foreach (Trip trip in _trips)
-            {
-                trip.SettleBalance();
-            }
+            foreach (var trip in _trips) trip.SettleBalance();
 
             return _trips;
         }

@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 namespace BillSplitterConsole.Infrastructure
 {
-    internal class ExpenseReader
+    public class ExpenseReader : IExpenseReader
     {
-        private Queue<object> inputNumerics_;
+        private readonly Queue<object> inputNumerics_;
 
         public ExpenseReader()
         {
@@ -16,70 +15,41 @@ namespace BillSplitterConsole.Infrastructure
 
         public Queue<object> ReadExpenses(string _filePath)
         {
-            List<string> inputLines = File.ReadLines(_filePath).ToList();
+            var inputLines = File.ReadLines(_filePath).ToList();
             GetParsedTokens(inputLines);
             return inputNumerics_;
         }
 
         private void GetParsedTokens(List<string> _tokens)
         {
-            try
+            var tokenIndex = 0;
+            var participantsCount = int.Parse(_tokens[tokenIndex++]);
+
+            while (participantsCount > 0 && tokenIndex < _tokens.Count)
             {
-                int tokenIndex = 0;
-                int participantsCount = int.Parse(_tokens[tokenIndex++]);
-
-                while (participantsCount > 0 && tokenIndex < _tokens.Count)
-                {
-
-                    inputNumerics_.Enqueue(participantsCount);
-
-                    for (int i = 0; i < participantsCount; i++)
-                    {
-                        ParseParticipant(_tokens, ref tokenIndex);
-                    }
-
-                    participantsCount = int.Parse(_tokens[tokenIndex++]);
-                }
                 inputNumerics_.Enqueue(participantsCount);
+
+                for (var i = 0; i < participantsCount; i++) ParseParticipant(_tokens, ref tokenIndex);
+
+                participantsCount = int.Parse(_tokens[tokenIndex++]);
             }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-            }
+
+            inputNumerics_.Enqueue(participantsCount);
         }
+
         private void ParseParticipant(List<string> _tokens, ref int _index)
         {
-            try
-            {
-                int expensesCount = int.Parse(_tokens[_index++]);
+            var expensesCount = int.Parse(_tokens[_index++]);
 
-                inputNumerics_.Enqueue(expensesCount);
+            inputNumerics_.Enqueue(expensesCount);
 
-                for (int i = 0; i < expensesCount; i++)
-                {
-                    ParseExpense(_tokens, ref _index);
-                }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            for (var i = 0; i < expensesCount; i++) ParseExpense(_tokens, ref _index);
         }
 
         private void ParseExpense(List<string> _tokens, ref int _index)
         {
-            try
-            {
-                decimal amount = decimal.Parse(_tokens[_index++]);
-                inputNumerics_.Enqueue(amount);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var amount = decimal.Parse(_tokens[_index++]);
+            inputNumerics_.Enqueue(amount);
         }
     }
 }
