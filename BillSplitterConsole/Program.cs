@@ -1,11 +1,19 @@
 ﻿using System;
 using BillSplitterConsole.Infrastructure;
 using BillSplitterConsole.Workflow;
+using Autofac;
 
 namespace BillSplitterConsole
 {
     internal class Program
     {
+        private static IContainer _iocContainer;
+
+        public static IContainer IocContainer
+        {
+            get { return _iocContainer; }
+        }
+
         private static void Main(string[] args)
         {
             const string outputFileExtension = ".out";
@@ -18,8 +26,28 @@ namespace BillSplitterConsole
             else
                 throw new ArgumentException("Specified expense file does not exist");
 
+            CreateIocContainer(inputFilePath, outputFilePath);
+
             var workflow = new BillSplitterWorkflow();
-            workflow.SplitBill(inputFilePath, outputFilePath);
+            IExpenseReader expenseReader = new FileExpenseReader(inputFilePath);
+            IPaymentWriter paymentWriter = new FilePaymentWriter(outputFilePath);
+
+            workflow.SplitBill(expenseReader, paymentWriter);
+        }
+
+        private static void CreateIocContainer(string readerFilePath, string writerFilePath)
+        {
+            var builder = new ContainerBuilder();
+
+            builder.RegisterInstance(new FileExpenseReader(readerFilePath))
+                .As<IExpenseReader>();
+            builder.RegisterType<FileExpenseReader>();
+
+            builder.RegisterInstance(new FilePaymentWriter(writerFilePath))
+                .As<IPaymentWriter>();
+            builder.RegisterType<FilePaymentWriter>();
+
+            _iocContainer = builder.Build();
         }
     }
 }

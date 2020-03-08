@@ -1,37 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using BillSplitterConsole.Infrastructure;
+﻿using BillSplitterConsole.Infrastructure;
 using BillSplitterConsole.Model;
+using System;
+using System.Collections.Generic;
 
 namespace BillSplitterConsole.Workflow
 {
     public class BillSplitterWorkflow
     {
-        private readonly List<Trip> trips_;
+        private readonly List<Trip> _trips;
 
         public BillSplitterWorkflow()
         {
-            trips_ = new List<Trip>();
+            _trips = new List<Trip>();
         }
 
-        public void SplitBill(string _tripInputFilePath, string _paymentOutputFilePath)
+       // public void SplitBill(string _tripInputFilePath, string _paymentOutputFilePath)
+        public void SplitBill(IExpenseReader expenseReader, IPaymentWriter paymentWriter)
         {
-            var expenseReader = new ExpenseReader();
-            var expenseQueue = expenseReader.ReadExpenses(_tripInputFilePath);
+            if (expenseReader == null || paymentWriter == null)
+            {
+                throw new ArgumentException("ExpenseReader and paymentWriter must be instantiated");
+            }
+
+            //var expenseReader = new IExpenseReader();
+           // IExpenseReader expenseReader;
+            var expenseQueue = expenseReader.ReadExpenses();
+
+            //using (var scope = Container.BeginLifetimeScope())
+            //{
+            //    var service = scope.Resolve<IService>();
+            //}
 
             AllocateExpenses(expenseQueue);
-            AllocatePayments(trips_);
+            AllocatePayments(_trips);
 
-            var paymentWriter = new PaymentWriter();
-            paymentWriter.WritePayments(_paymentOutputFilePath, trips_);
+           // var paymentWriter = new FilePaymentWriter();
+            paymentWriter.WritePayments(_trips);
         }
 
-        public List<Trip> AllocateExpenses(Queue<object> _expenseQueue)
+        public List<Trip> AllocateExpenses(Queue<object> expenseQueue)
         {
-            if (_expenseQueue == null || _expenseQueue.Count == 0)
-                throw new ArgumentException("expense queue must be instantiated with at least one queue element");
+            if (expenseQueue == null || expenseQueue.Count == 0)
+                throw new ArgumentException("Expense queue must be instantiated with at least one queue element");
 
-            var participantCount = (int) _expenseQueue.Dequeue();
+            var participantCount = (int) expenseQueue.Dequeue();
 
             while (participantCount > 0)
             {
@@ -39,51 +51,51 @@ namespace BillSplitterConsole.Workflow
 
                 for (var elementCount = 0; elementCount < participantCount; elementCount++)
                 {
-                    var participantID = AddParticipant(trip);
-                    AllocateParticipantExpenses(_expenseQueue, trip, participantID);
+                    var participantId = AddParticipant(trip);
+                    AllocateParticipantExpenses(expenseQueue, trip, participantId);
                 }
 
-                participantCount = (int) _expenseQueue.Dequeue();
+                participantCount = (int) expenseQueue.Dequeue();
             }
 
-            return trips_;
+            return _trips;
         }
 
-        private void AllocateParticipantExpenses(Queue<object> _expenseQueue, Trip _trip, int _participantID)
+        private void AllocateParticipantExpenses(Queue<object> expenseQueue, Trip trip, int participantId)
         {
-            var expenseCount = (int) _expenseQueue.Dequeue();
+            var expenseCount = (int) expenseQueue.Dequeue();
             for (var elementCount = 0; elementCount < expenseCount; elementCount++)
             {
-                var amount = (decimal) _expenseQueue.Dequeue();
-                AddExpense(_trip, _participantID, amount);
+                var amount = (decimal) expenseQueue.Dequeue();
+                AddExpense(trip, participantId, amount);
             }
         }
 
         private Trip AddTrip()
         {
             var trip = new Trip();
-            trips_.Add(trip);
+            _trips.Add(trip);
             return trip;
         }
 
-        private int AddParticipant(Trip _trip)
+        private static int AddParticipant(Trip trip)
         {
-            var participantID = _trip.AddParticipant();
-            return participantID;
+            var participantId = trip.AddParticipant();
+            return participantId;
         }
 
-        private void AddExpense(Trip _trip, int _participantID, decimal _amount)
+        private static void AddExpense(Trip trip, int participantId, decimal amount)
         {
-            _trip.AddExpense(_participantID, _amount);
+            trip.AddExpense(participantId, amount);
         }
 
-        public List<Trip> AllocatePayments(List<Trip> _trips)
+        public static List<Trip> AllocatePayments(List<Trip> trips)
         {
-            if (_trips == null) throw new ArgumentException("Trip list must be instantiated");
+            if (trips == null) throw new ArgumentException("Trip list must be instantiated");
 
-            foreach (var trip in _trips) trip.SettleBalance();
+            foreach (var trip in trips) trip.SettleBalance();
 
-            return _trips;
+            return trips;
         }
     }
 }

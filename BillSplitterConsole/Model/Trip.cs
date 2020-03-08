@@ -5,38 +5,31 @@ namespace BillSplitterConsole.Model
 {
     public class Trip
     {
-        private readonly Dictionary<int, Participant> participants_;
+        private readonly Dictionary<int, Participant> _participants;
 
         public Trip()
         {
-            participants_ = new Dictionary<int, Participant>();
+            _participants = new Dictionary<int, Participant>();
         }
 
         public int AddParticipant()
         {
             var participant = new Participant();
-            participants_.Add(participant.ID, participant);
-            return participant.ID;
+            _participants.Add(participant.Id, participant);
+            return participant.Id;
         }
 
-        public int AddParticipant(Participant _participant)
+        public void AddExpense(int participantId, decimal amount)
         {
-            participants_.Add(_participant.ID, _participant);
-            return _participant.ID;
-        }
-
-        public void AddExpense(int _participantID, decimal _amount)
-        {
-            participants_[_participantID].AddExpense(_amount);
+            _participants[participantId].AddExpense(amount);
         }
 
         public void SettleBalance()
         {
-            // TODO
-            var totalExpenses = (from p in participants_.Values select p.GetTotalExpenses()).Sum();
-            var averageExpense = totalExpenses / participants_.Values.Count;
+            var totalExpenses = (from p in _participants.Values select p.GetTotalExpenses()).Sum();
+            var averageExpense = totalExpenses / _participants.Values.Count;
 
-            foreach (var participant in participants_.Values)
+            foreach (var participant in _participants.Values)
                 participant.SetTripBalance(averageExpense - participant.GetTotalExpenses());
         }
 
@@ -44,9 +37,9 @@ namespace BillSplitterConsole.Model
         {
             var balances = new List<ParticipantBalance>();
 
-            foreach (var participant in participants_.Values)
+            foreach (var participant in _participants.Values)
             {
-                var balance = new ParticipantBalance(participant.ID, participant.GetTripBalance());
+                var balance = new ParticipantBalance(participant.Id, participant.GetTripBalance());
                 balances.Add(balance);
             }
 

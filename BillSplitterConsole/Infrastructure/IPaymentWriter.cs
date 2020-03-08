@@ -5,6 +5,6 @@ namespace BillSplitterConsole.Infrastructure
 {
     public interface IPaymentWriter
     {
-        void WritePayments(string _outputPath, List<Trip> _trips);
+        void WritePayments(IEnumerable<Trip> trips);
     }
 }

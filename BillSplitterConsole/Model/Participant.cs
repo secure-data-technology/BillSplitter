@@ -13,10 +13,10 @@ namespace BillSplitterConsole.Model
         {
             _expenses = new List<Expense>();
             _balance = decimal.Zero;
-            ID = ++_id;
+            Id = ++_id;
         }
 
-        public int ID { get; }
+        public int Id{ get; }
 
         public void AddExpense(decimal amount)
         {

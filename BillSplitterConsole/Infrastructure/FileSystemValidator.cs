@@ -4,14 +4,14 @@ namespace BillSplitterConsole.Infrastructure
 {
     internal class FileSystemValidator
     {
-        public bool FileExists(string _filePath)
+        public bool FileExists(string filePath)
         {
-            return File.Exists(_filePath);
+            return File.Exists(filePath);
         }
 
-        public void EnsureFileDoesNotExist(string _filePath)
+        public void EnsureFileDoesNotExist(string filePath)
         {
-            if (FileExists(_filePath)) File.Delete(_filePath);
+            if (FileExists(filePath)) File.Delete(filePath);
         }
     }
 }

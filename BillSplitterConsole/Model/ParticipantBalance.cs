@@ -2,13 +2,13 @@
 {
     public class ParticipantBalance
     {
-        public ParticipantBalance(int _participantID, decimal _balance)
+        public ParticipantBalance(int participantId, decimal balance)
         {
-            ParticipantID = _participantID;
-            Balance = _balance;
+            ParticipantId = participantId;
+            Balance = balance;
         }
 
-        public int ParticipantID { get; }
+        public int ParticipantId { get; }
 
         public decimal Balance { get; }
     }

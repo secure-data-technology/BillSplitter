@@ -14,22 +14,22 @@ namespace BillSplitterTests
         }
 
         [TestCaseSource(typeof(BillSplitterWorkflowTestData), "TestCases")]
-        public void AllocateExpensesAndPaymentsTest(Queue<object> _testData, int _tripCount, List<ParticipantBalance> _testResults)
+        public void AllocateExpensesAndPaymentsTest(Queue<object> testData, int tripCount, List<ParticipantBalance> testResults)
         {
             var workflow = new BillSplitterWorkflow();
-            List<Trip> trips = workflow.AllocateExpenses(_testData);
-            trips = workflow.AllocatePayments(trips);
+            List<Trip> trips = workflow.AllocateExpenses(testData);
+            trips = BillSplitterWorkflow.AllocatePayments(trips);
 
-            Assert.AreEqual(_tripCount, trips.Count);
+            Assert.AreEqual(tripCount, trips.Count);
 
             if (trips.Count > 0)
             {
                 List<ParticipantBalance> participantBalances = (List<ParticipantBalance>)trips[0].GetBalances();
 
-                Assert.AreEqual(_testResults.Count, participantBalances.Count);
+                Assert.AreEqual(testResults.Count, participantBalances.Count);
                 for (int i = 0; i < participantBalances.Count; i++)
                 {
-                    Assert.AreEqual(_testResults[i].Balance, participantBalances[i].Balance);
+                    Assert.AreEqual(testResults[i].Balance, participantBalances[i].Balance);
                 }
             }
         }
