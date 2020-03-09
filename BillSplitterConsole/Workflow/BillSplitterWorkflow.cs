@@ -14,34 +14,25 @@ namespace BillSplitterConsole.Workflow
             _trips = new List<Trip>();
         }
 
-       // public void SplitBill(string _tripInputFilePath, string _paymentOutputFilePath)
         public void SplitBill(IExpenseReader expenseReader, IPaymentWriter paymentWriter)
         {
             if (expenseReader == null || paymentWriter == null)
             {
-                throw new ArgumentException("ExpenseReader and paymentWriter must be instantiated");
+                throw new ArgumentException(Resources.InvalidSplitBillArguments);
             }
 
-            //var expenseReader = new IExpenseReader();
-           // IExpenseReader expenseReader;
             var expenseQueue = expenseReader.ReadExpenses();
-
-            //using (var scope = Container.BeginLifetimeScope())
-            //{
-            //    var service = scope.Resolve<IService>();
-            //}
 
             AllocateExpenses(expenseQueue);
             AllocatePayments(_trips);
 
-           // var paymentWriter = new FilePaymentWriter();
             paymentWriter.WritePayments(_trips);
         }
 
         public List<Trip> AllocateExpenses(Queue<object> expenseQueue)
         {
             if (expenseQueue == null || expenseQueue.Count == 0)
-                throw new ArgumentException("Expense queue must be instantiated with at least one queue element");
+                throw new ArgumentException(Resources.InvalidExpenseQueue);
 
             var participantCount = (int) expenseQueue.Dequeue();
 
@@ -91,7 +82,7 @@ namespace BillSplitterConsole.Workflow
 
         public static List<Trip> AllocatePayments(List<Trip> trips)
         {
-            if (trips == null) throw new ArgumentException("Trip list must be instantiated");
+            if (trips == null) throw new ArgumentException(Resources.InvalidTripList);
 
             foreach (var trip in trips) trip.SettleBalance();
 

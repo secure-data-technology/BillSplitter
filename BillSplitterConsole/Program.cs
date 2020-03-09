@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Autofac;
 using BillSplitterConsole.Infrastructure;
 using BillSplitterConsole.Workflow;
-using Autofac;
+using System;
 
 namespace BillSplitterConsole
 {
@@ -16,7 +16,7 @@ namespace BillSplitterConsole
 
         private static void Main(string[] args)
         {
-            const string outputFileExtension = ".out";
+            string outputFileExtension = Resources.OutputFileExtension;
             var inputFilePath = args[0];
             var outputFilePath = inputFilePath + outputFileExtension;
 
@@ -24,15 +24,18 @@ namespace BillSplitterConsole
             if (fileSystemValidator.FileExists(inputFilePath))
                 fileSystemValidator.EnsureFileDoesNotExist(outputFilePath);
             else
-                throw new ArgumentException("Specified expense file does not exist");
+                throw new ArgumentException(Resources.InvalidExpenseFilePath);
 
             CreateIocContainer(inputFilePath, outputFilePath);
 
             var workflow = new BillSplitterWorkflow();
-            IExpenseReader expenseReader = new FileExpenseReader(inputFilePath);
-            IPaymentWriter paymentWriter = new FilePaymentWriter(outputFilePath);
 
-            workflow.SplitBill(expenseReader, paymentWriter);
+            using (var scope = _iocContainer.BeginLifetimeScope())
+            {
+                var expenseReader = scope.Resolve<IExpenseReader>();
+                var paymentWriter = scope.Resolve<IPaymentWriter>();
+                workflow.SplitBill(expenseReader, paymentWriter);
+            }
         }
 
         private static void CreateIocContainer(string readerFilePath, string writerFilePath)
@@ -41,11 +44,8 @@ namespace BillSplitterConsole
 
             builder.RegisterInstance(new FileExpenseReader(readerFilePath))
                 .As<IExpenseReader>();
-            builder.RegisterType<FileExpenseReader>();
-
             builder.RegisterInstance(new FilePaymentWriter(writerFilePath))
                 .As<IPaymentWriter>();
-            builder.RegisterType<FilePaymentWriter>();
 
             _iocContainer = builder.Build();
         }

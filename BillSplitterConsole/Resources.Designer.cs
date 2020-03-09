@@ -59,5 +59,50 @@ namespace BillSplitterConsole {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specified expense file does not exist.
+        /// </summary>
+        internal static string InvalidExpenseFilePath {
+            get {
+                return ResourceManager.GetString("InvalidExpenseFilePath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expense queue must be instantiated with at least one queue element.
+        /// </summary>
+        internal static string InvalidExpenseQueue {
+            get {
+                return ResourceManager.GetString("InvalidExpenseQueue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExpenseReader and paymentWriter must be instantiated.
+        /// </summary>
+        internal static string InvalidSplitBillArguments {
+            get {
+                return ResourceManager.GetString("InvalidSplitBillArguments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trip list must be instantiated.
+        /// </summary>
+        internal static string InvalidTripList {
+            get {
+                return ResourceManager.GetString("InvalidTripList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .out.
+        /// </summary>
+        internal static string OutputFileExtension {
+            get {
+                return ResourceManager.GetString("OutputFileExtension", resourceCulture);
+            }
+        }
     }
 }
